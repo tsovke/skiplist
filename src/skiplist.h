@@ -35,3 +35,10 @@ template <typename K, typename V> int SkipList<K, V>::randomLevel() {
     ++level;
   return (level < MAX_LEVEL) ? level : MAX_LEVEL;
 }
+
+template <typename K, typename V>
+void SkipList<K, V>::SkipList<K, V>::SkipList<K, V>::update(Node<K, V> **update,
+                                                            Node<K, V> *node,
+                                                            int level){
+  
+}
