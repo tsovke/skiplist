@@ -13,6 +13,13 @@ public:
       : key(_key), value(_val), node_level(_level),
         forward(std::vector<Node<K, V> *>(node_level, nullptr)) {}
 
+  // Destructor
+  ~Node() {
+    // Explicity delete all forward pointers to avoid memory leaks
+    for (auto &prt : forward)
+      delete prt;
+  }
+
   // Get the key
   const K &GetKey() const { return key; }
   K &GetKey() { return key; }
