@@ -18,5 +18,8 @@ public:
   Node<K, V> *search(const K &key) const;
   bool insert(const K &key, V &val);
   bool remove(const K &key);
-
+  void displayList();
+  void dumpFile();
+  void loadFile();
+  int size();
 };

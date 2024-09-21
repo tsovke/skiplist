@@ -4,13 +4,14 @@
 template <typename K, typename V> class Node {
   K key;
   V value;
+  int node_level;
   std::vector<Node<K, V> *>
       forward; // Vector pointing to nodes at the next level
 public:
   // Constructor
-  Node(const K &_key, const V &_val, int level)
-      : key(_key), value(_val),
-        forward(std::vector<Node<K, V> *>(level, nullptr)) {}
+  Node(const K &_key, const V &_val, int _level)
+      : key(_key), value(_val), node_level(_level),
+        forward(std::vector<Node<K, V> *>(node_level, nullptr)) {}
 
   // Get the key
   const K &GetKey() const { return key; }
