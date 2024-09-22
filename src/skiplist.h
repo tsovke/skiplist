@@ -30,7 +30,7 @@ template <typename K, typename V> class SkipList {
 
 public:
   Node<K, V> *search(const K &key) const;
-  bool insert(const K &key, V &val);
+  bool insert(const K &key, const V &val);
   bool remove(const K &key);
   void displayList();
   void dumpFile();
@@ -75,7 +75,7 @@ Node<K, V> *SkipList<K, V>::search(const K &key) const {
 }
 
 template <typename K, typename V>
-bool SkipList<K, V>::insert(const K &key, V &val) {
+bool SkipList<K, V>::insert(const K &key,const V &val) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
