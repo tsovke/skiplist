@@ -1,16 +1,19 @@
 #pragma once
 
 #include "node.h"
+
+#include "../data/data.pb.h"
+
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 
 template <typename K, typename V> class SkipList {
-  Node<K, V> *header; // Header node of the skiplist
-  // Node<K, V> *footer; // Footer node of the skiplist
   int level; // Current level of the skiplist
   size_t node_count;
+  Node<K, V> *header; // Header node of the skiplist
+  // Node<K, V> *footer; // Footer node of the skiplist
 
   static const int MAX_LEVEL = 16;
   // static constexpr double PROBABILITY =
@@ -19,8 +22,8 @@ template <typename K, typename V> class SkipList {
   // Helper function: Randomly determine the level of a new node
   int randomLevel();
 
-  // Helper function: Update predecessor nodes
-  void update(Node<K, V> **update, Node<K, V> *node, int level);
+  // // Helper function: Update predecessor nodes
+  // void update(Node<K, V> **update, Node<K, V> *node, int level);
 
 public:
   Node<K, V> *search(const K &key) const;
@@ -31,11 +34,17 @@ public:
   void loadFile();
   size_t listSize();
 
-  SkipList():header();
-  ~SkipList();
+  SkipList() : level(), node_count() { header = new Node<K, V>(); }
+  ~SkipList() {
+    Node<K, V> *node = header;
+    Node<K, V> *tmp;
+    while (node) {
+      tmp = node;
+      node = node->getFowardAt(0);
+      delete tmp;
+    }
+  }
 };
-
-
 
 template <typename K, typename V> int SkipList<K, V>::randomLevel() {
   int level = 1;
@@ -44,8 +53,9 @@ template <typename K, typename V> int SkipList<K, V>::randomLevel() {
   return (level < MAX_LEVEL) ? level : MAX_LEVEL;
 }
 
-template <typename K, typename V>
-void SkipList<K, V>::update(Node<K, V> **update, Node<K, V> *node, int level) {}
+// template <typename K, typename V>
+// void SkipList<K, V>::update(Node<K, V> **update, Node<K, V> *node, int level)
+// {}
 
 template <typename K, typename V>
 Node<K, V> *SkipList<K, V>::search(const K &key) const {
@@ -141,7 +151,14 @@ template <typename K, typename V> void SkipList<K, V>::displayList() {
   }
 }
 
-template <typename K, typename V> void SkipList<K, V>::dumpFile() {}
+template <typename K, typename V> void SkipList<K, V>::dumpFile() {
+  data::KeyValues kv_data;
+  KeyValuePair kv_pair;
+  Node<K, V> *node = header->getFowardAt(0);
+  while (node) {
+    
+  }
+}
 
 template <typename K, typename V> void SkipList<K, V>::loadFile() {}
 
