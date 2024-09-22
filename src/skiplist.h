@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -75,7 +76,7 @@ Node<K, V> *SkipList<K, V>::search(const K &key) const {
 }
 
 template <typename K, typename V>
-bool SkipList<K, V>::insert(const K &key,const V &val) {
+bool SkipList<K, V>::insert(const K &key, const V &val) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
@@ -160,8 +161,16 @@ template <typename K, typename V> void SkipList<K, V>::dumpFile() {
   Node<K, V> *node = header->getForwardAt(0);
   while (node) {
     data::KeyValuePair *kv = kv_data.add_pairs();
-    kv->set_key(std::to_string(node->GetKey()));
+    try {
+      kv->set_key(std::to_string(node->GetKey()));
+    } catch (const std::exception &e) {
+      std::cerr << "Error converting value to tring: " << e.what() << std::endl;
+    }
+    try {
     kv->set_value(std::to_string(node->GetValue()));
+    } catch (const std::exception &e) {
+      std::cerr << "Error converting value to tring: " << e.what() << std::endl;
+    }
   }
 
   std::string serialized;
