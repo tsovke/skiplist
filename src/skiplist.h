@@ -69,7 +69,7 @@ Node<K, V> *SkipList<K, V>::search(const K &key) const {
       node = node->getForwardAt(i);
 
   node = node->getForwardAt(0);
-  if (node->GetKey() == key)
+  if (node && node->GetKey() == key)
     return node;
   else
     return nullptr;
@@ -87,7 +87,7 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   }
 
   node = node->getForwardAt(0);
-  if (node->GetKey() == key)
+  if (node && node->GetKey() == key)
     return false; // If the key exists, return false.
 
   int newLevel = randomLevel();
@@ -105,6 +105,7 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   ++node_count;
 
   delete[] update;
+  return true;
 }
 
 template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
@@ -118,7 +119,7 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
   }
 
   node = node->getForwardAt(0);
-  if (node->GetKey() != key)
+  if (node && node->GetKey() != key)
     return false;
 
   for (int i = 0; i <= level; ++i) {
@@ -192,7 +193,7 @@ template <typename K, typename V> void SkipList<K, V>::loadFile() {
       throw std::invalid_argument(
           "Failed to convert string to key-value pair.");
     }
-    insert(key, value);
+    (void)insert(key, value);
   }
   file_in.close();
 }
