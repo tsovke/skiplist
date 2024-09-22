@@ -4,16 +4,16 @@
 
 #include "../src/skiplist.h"
 void testSkiplist() {
-  SkipList<int, std::string> sl;
+  SkipList<int, int> sl;
 
   // Test insertions
-  sl.insert(1, "one");
-  sl.insert(2, "two");
-  sl.insert(3, "three");
+  sl.insert(1, 101);
+  sl.insert(2, 102);
+  sl.insert(3, 103);
 
   // Test search
   assert(sl.search(1) != nullptr);
-  assert(sl.search(1)->GetValue() == "one");
+  assert(sl.search(1)->GetValue() == 101);
 
   // Test removal
   sl.remove(1);
