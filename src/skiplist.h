@@ -2,8 +2,6 @@
 
 #include "node.h"
 
-#include "../data/data.pb.h"
-
 #include <cstddef>
 #include <cstdlib>
 #include <exception>
@@ -157,58 +155,34 @@ template <typename K, typename V> void SkipList<K, V>::displayList() {
 
 template <typename K, typename V> void SkipList<K, V>::dumpFile() {
   std::cout << "======DumpFile======" << std::endl;
-  data::KeyValues kv_data;
   Node<K, V> *node = header->getForwardAt(0);
-  while (node) {
-    data::KeyValuePair *kv = kv_data.add_pairs();
-    try {
-      kv->set_key(std::to_string(node->GetKey()));
-    } catch (const std::exception &e) {
-      std::cerr << "Error converting value to tring: " << e.what() << std::endl;
-    }
-    try {
-    kv->set_value(std::to_string(node->GetValue()));
-    } catch (const std::exception &e) {
-      std::cerr << "Error converting value to tring: " << e.what() << std::endl;
-    }
-  }
 
-  std::string serialized;
-  kv_data.SerializeToString(&serialized);
-
-  std::ofstream file("data.bin", std::ios::out | std::ios::binary);
+  std::ofstream file("data.bin");
   if (!file.is_open()) {
     std::cerr << "Failed to open file for writing." << std::endl;
     return;
   }
-  file.write(serialized.data(), serialized.size());
+  while (node) {
+    file << node->GetKey() << ":" << node->GetValue() << "\n";
+    node = node->getForwardAt(0);
+  }
+  file.flush();
   file.close();
   std::cout << "Data has been written to data.bin." << std::endl;
 }
 
 template <typename K, typename V> void SkipList<K, V>::loadFile() {
   std::cout << "======LoadFile======" << std::endl;
+  std::ifstream file_in("data.bin");
+  std::string line, key, value;
+  while (std::getline(file_in, line)) {
+    key = line.substr(0, line.find(":"));
+    value = line.substr(line.find(":") + 1, line.length());
+    if (key.empty() || value.empty())
+      continue;
 
-  data::KeyValues kv_data;
-
-  std::ifstream file_in("data.bin", std::ios::in | std::ios::binary);
-  if (!file_in.is_open()) {
-    std::cerr << "Failed to open file for reading." << std::endl;
-    return;
-  }
-
-  std::string serialized(std::istreambuf_iterator<char>(file_in), {});
-
-  file_in.close();
-
-  if (!kv_data.ParseFromString(serialized)) {
-    std::cerr << "Failed to parse serialized data." << std::endl;
-    return;
-  }
-
-  for (const auto &kv : kv_data.pairs()) {
-    std::cout << "Load (" << kv.key() << ", " << kv.value() << ")\n";
-    insert(static_cast<K>(kv.key()), static_cast<V>(kv.value()));
+    std::cout << "Load (" << key << "," << value << ")\n";
+    insert(static_cast<K>(key), static_cast<V>(value));
   }
   file_in.close();
 }
