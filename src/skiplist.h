@@ -8,6 +8,8 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -163,7 +165,7 @@ template <typename K, typename V> void SkipList<K, V>::dumpFile() {
     return;
   }
   while (node) {
-    file << node->GetKey() << ":" << node->GetValue() << "\n";
+    file << node->GetKey() << ':' << node->GetValue() << "\n";
     node = node->getForwardAt(0);
   }
   file.flush();
@@ -174,15 +176,23 @@ template <typename K, typename V> void SkipList<K, V>::dumpFile() {
 template <typename K, typename V> void SkipList<K, V>::loadFile() {
   std::cout << "======LoadFile======" << std::endl;
   std::ifstream file_in("data.bin");
-  std::string line, key, value;
+  std::string line;
   while (std::getline(file_in, line)) {
-    key = line.substr(0, line.find(":"));
-    value = line.substr(line.find(":") + 1, line.length());
-    if (key.empty() || value.empty())
+    std::string keyStr = line.substr(0, line.find(':'));
+    std::string valueStr = line.substr(line.find(':') + 1, line.length());
+    if (keyStr.empty() || valueStr.empty())
       continue;
+    std::istringstream keyStream(keyStr);
+    std::istringstream valueStream(valueStr);
+    std::cout << "Load (" << keyStr << "," << valueStr << ")\n";
+    K key;
+    V value;
 
-    std::cout << "Load (" << key << "," << value << ")\n";
-    insert(static_cast<K>(key), static_cast<V>(value));
+    if (!(keyStream >> key) || !(valueStream >> value)) {
+      throw std::invalid_argument(
+          "Failed to convert string to key-value pair.");
+    }
+    insert(key, value);
   }
   file_in.close();
 }
