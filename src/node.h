@@ -38,9 +38,9 @@ public:
   std::vector<Node<K, V> *> &getForward() { return forward; }
 
   // Get the forward pointer at a specific index
-  Node<K, V> *getFowardAt(int _index) const { return forward[_index]; }
-  Node<K, V> *getFowardAt(int _index) { return forward[_index]; }
+  Node<K, V> *getForwardAt(int _index) const { return forward[_index]; }
+  Node<K, V> *getForwardAt(int _index) { return forward[_index]; }
 
   // Set the forward pointer at a specific index
-  void setFowardAt(int _index, Node<K, V> *_node) { forward[_index] = _node; }
+  void setForwardAt(int _index, Node<K, V> *_node) { forward[_index] = _node; }
 };
