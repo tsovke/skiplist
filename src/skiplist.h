@@ -31,9 +31,11 @@ public:
   void loadFile();
   size_t listSize();
 
-  SkipList();
+  SkipList():header();
   ~SkipList();
 };
+
+
 
 template <typename K, typename V> int SkipList<K, V>::randomLevel() {
   int level = 1;

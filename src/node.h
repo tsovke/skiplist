@@ -9,6 +9,8 @@ template <typename K, typename V> class Node {
       forward; // Vector pointing to nodes at the next level
 public:
   // Constructor
+  Node() : key(), value(), forward() {}
+  // Constructor
   Node(const K &_key, const V &_val, int _level)
       : key(_key), value(_val), node_level(_level),
         forward(std::vector<Node<K, V> *>(node_level, nullptr)) {}
