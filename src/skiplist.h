@@ -3,12 +3,13 @@
 #include "node.h"
 #include <cstddef>
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 
 template <typename K, typename V> class SkipList {
   Node<K, V> *header; // Header node of the skiplist
-  Node<K, V> *footer; // Footer node of the skiplist
-  int level;          // Current level of the skiplist
+  // Node<K, V> *footer; // Footer node of the skiplist
+  int level; // Current level of the skiplist
   size_t node_count;
 
   static const int MAX_LEVEL = 16;
@@ -48,7 +49,7 @@ template <typename K, typename V>
 Node<K, V> *SkipList<K, V>::search(const K &key) const {
   Node<K, V> *node = header;
   for (int i = level; i >= 0; --i)
-    while (node->getFowardAt(i)->GetKey() < key)
+    while (node->getFowardAt(i) && node->getFowardAt(i)->GetKey() < key)
       node = node->getFowardAt(i);
 
   node = node->getFowardAt(0);
@@ -63,7 +64,7 @@ bool SkipList<K, V>::insert(const K &key, V &val) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
-    while (node->getFowardAt(i)->GetKey() < key)
+    while (node->getFowardAt(i) && node->getFowardAt(i)->GetKey() < key)
       node = node->getFowardAt(i);
 
     update[i] = node;
@@ -94,7 +95,7 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
-    while (node->getFowardAt(i)->GetKey() < key)
+    while (node->getFowardAt(i) && node->getFowardAt(i)->GetKey() < key)
       node = node->getFowardAt(i);
 
     update[i] = node;
@@ -114,16 +115,34 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
   delete node;
   --node_count;
 
-  while (level > 0 && header->getFowardAt(level) == footer)
+  while (level > 0 && header->getFowardAt(level) == nullptr) // footer
     --level;
 
   return true;
 }
 
-template <typename K, typename V> void SkipList<K, V>::displayList() {}
+template <typename K, typename V> void SkipList<K, V>::displayList() {
+  Node<K, V> *node;
+  for (int i = level; i >= 0; --i) {
+    node = header->getFowardAt(i);
+    std::cout << "Level " << i << " : ";
+    int tmp = 0;
+    while (node) {
+      std::cout << "    (" << node->GetKey() << ", " << node->GetValue() << ")";
+      if (++tmp == 10) {
+        std::cout << "\n";
+        tmp = 0;
+      }
+      node = node->getFowardAt(i);
+    }
+    std::cout << "\n";
+  }
+}
 
 template <typename K, typename V> void SkipList<K, V>::dumpFile() {}
 
 template <typename K, typename V> void SkipList<K, V>::loadFile() {}
 
-template <typename K, typename V> size_t SkipList<K, V>::listSize() {}
+template <typename K, typename V> size_t SkipList<K, V>::listSize() {
+  return node_count;
+}
