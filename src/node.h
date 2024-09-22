@@ -27,8 +27,8 @@ public:
   K &GetKey() { return key; }
 
   // Get the value
-  const K &GetValue() const { return value; }
-  K &GetValue() { return value; }
+  const V &GetValue() const { return value; }
+  const V &GetValue() { return value; }
 
   // Set the value
   void SetValue(const V &_val) { value = _val; }
