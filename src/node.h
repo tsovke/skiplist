@@ -21,7 +21,9 @@ public:
   ~Node() {
     // Explicity delete all forward pointers to avoid memory leaks
     for (auto &prt : forward)
-      delete prt;
+      if (prt) {
+        delete prt;
+      }
   }
 
   // Get the key

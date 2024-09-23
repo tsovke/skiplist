@@ -32,22 +32,25 @@ template <typename K, typename V> class SkipList {
 public:
   Node<K, V> *search(const K &key) const;
   bool insert(const K &key, const V &val);
-  bool remove(const K &key);
+  bool remove(K key);
   void displayList();
   void dumpFile();
   void loadFile();
   size_t listSize();
 
-  SkipList() : level(), node_count() { header = new Node<K, V>(); }
-  ~SkipList() {
-    Node<K, V> *node = header;
-    Node<K, V> *tmp;
-    while (node) {
-      tmp = node;
-      node = node->forward[0];
-      delete tmp;
-    }
+  SkipList() : level(), node_count() {
+    this->header = new Node<K, V>(K(), V(), MAX_LEVEL);
   }
+  ~SkipList() = default;
+  //  {
+  //   Node<K, V> *node = header;
+  //   Node<K, V> *tmp;
+  //   while (node) {
+  //     tmp = node;
+  //     node = node->forward[0];
+  //     delete tmp;
+  //   }
+  // }
 };
 
 template <typename K, typename V> int SkipList<K, V>::randomLevel() {
@@ -108,8 +111,8 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   return true;
 }
 
-template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
-  Node<K, V> *node = header;
+template <typename K, typename V> bool SkipList<K, V>::remove(K key) {
+  Node<K, V> *node = this->header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
     while (node->forward[i] && node->forward[i]->GetKey() < key)
@@ -129,7 +132,8 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
     update[i]->forward[i] = node->forward[i];
   }
 
-  delete node;
+  // delete node;
+  // delete[] update;
   --node_count;
 
   while (level > 0 && header->forward[level] == nullptr) // footer
