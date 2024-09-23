@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <iostream>
-#include <string>
 
 #include "../src/skiplist.h"
 void testSkiplist() {

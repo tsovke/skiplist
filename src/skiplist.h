@@ -44,7 +44,7 @@ public:
     Node<K, V> *tmp;
     while (node) {
       tmp = node;
-      node = node->getForwardAt(0);
+      node = node->forward[0];
       delete tmp;
     }
   }
@@ -65,10 +65,10 @@ template <typename K, typename V>
 Node<K, V> *SkipList<K, V>::search(const K &key) const {
   Node<K, V> *node = header;
   for (int i = level; i >= 0; --i)
-    while (node->getForwardAt(i) && node->getForwardAt(i)->GetKey() < key)
-      node = node->getForwardAt(i);
+    while (node->forward[i] && node->forward[i]->GetKey() < key)
+      node = node->forward[i];
 
-  node = node->getForwardAt(0);
+  node = node->forward[0];
   if (node && node->GetKey() == key)
     return node;
   else
@@ -80,13 +80,13 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
-    while (node->getForwardAt(i) && node->getForwardAt(i)->GetKey() < key)
-      node = node->getForwardAt(i);
+    while (node->forward[i] && node->forward[i]->GetKey() < key)
+      node = node->forward[i];
 
     update[i] = node;
   }
 
-  node = node->getForwardAt(0);
+  node = node->forward[0];
   if (node && node->GetKey() == key)
     return false; // If the key exists, return false.
 
@@ -99,8 +99,8 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   Node<K, V> *newNode = new Node<K, V>(key, val, newLevel);
   // Update the pointers of the predecessor nodes.
   for (int i = 0; i < newLevel; ++i) {
-    newNode->setForwardAt(i, update[i]->getForwardAt(i));
-    update[i]->setForwardAt(i, newNode);
+    newNode->forward[i] = update[i]->forward[i];
+    update[i]->forward[i] = newNode;
   }
   ++node_count;
 
@@ -112,27 +112,27 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
   Node<K, V> *node = header;
   Node<K, V> **update = new Node<K, V> *[MAX_LEVEL];
   for (int i = level; i >= 0; --i) {
-    while (node->getForwardAt(i) && node->getForwardAt(i)->GetKey() < key)
-      node = node->getForwardAt(i);
+    while (node->forward[i] && node->forward[i]->GetKey() < key)
+      node = node->forward[i];
 
     update[i] = node;
   }
 
-  node = node->getForwardAt(0);
+  node = node->forward[0];
   if (node && node->GetKey() != key)
     return false;
 
   for (int i = 0; i <= level; ++i) {
-    if (update[i]->getForwardAt(i) != node)
+    if (update[i]->forward[i] != node)
       break;
 
-    update[i]->setForwardAt(i, node->getForwardAt(i));
+    update[i]->forward[i] = node->forward[i];
   }
 
   delete node;
   --node_count;
 
-  while (level > 0 && header->getForwardAt(level) == nullptr) // footer
+  while (level > 0 && header->forward[level] == nullptr) // footer
     --level;
 
   return true;
@@ -141,7 +141,7 @@ template <typename K, typename V> bool SkipList<K, V>::remove(const K &key) {
 template <typename K, typename V> void SkipList<K, V>::displayList() {
   Node<K, V> *node;
   for (int i = level; i >= 0; --i) {
-    node = header->getForwardAt(i);
+    node = header->forward[i];
     std::cout << "Level " << i << " : ";
     int tmp = 0;
     while (node) {
@@ -150,7 +150,7 @@ template <typename K, typename V> void SkipList<K, V>::displayList() {
         std::cout << "\n";
         tmp = 0;
       }
-      node = node->getForwardAt(i);
+      node = node->forward[i];
     }
     std::cout << "\n";
   }
@@ -158,7 +158,7 @@ template <typename K, typename V> void SkipList<K, V>::displayList() {
 
 template <typename K, typename V> void SkipList<K, V>::dumpFile() {
   std::cout << "======DumpFile======" << std::endl;
-  Node<K, V> *node = header->getForwardAt(0);
+  Node<K, V> *node = header->forward[0];
 
   std::ofstream file("data.bin");
   if (!file.is_open()) {
@@ -167,7 +167,7 @@ template <typename K, typename V> void SkipList<K, V>::dumpFile() {
   }
   while (node) {
     file << node->GetKey() << ':' << node->GetValue() << "\n";
-    node = node->getForwardAt(0);
+    node = node->forward[0];
   }
   file.flush();
   file.close();

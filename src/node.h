@@ -5,9 +5,11 @@ template <typename K, typename V> class Node {
   K key;
   V value;
   int node_level;
+
+public:
   std::vector<Node<K, V> *>
       forward; // Vector pointing to nodes at the next level
-public:
+
   // Constructor
   Node() : key(), value(), node_level(), forward() {}
   // Constructor
@@ -33,14 +35,15 @@ public:
   // Set the value
   void SetValue(const V &_val) { value = _val; }
 
-  // Get the vector of forward pointers
-  const std::vector<Node<K, V> *> &getForward() const { return forward; }
-  std::vector<Node<K, V> *> &getForward() { return forward; }
+  // // Get the vector of forward pointers
+  // const std::vector<Node<K, V> *> &getForward() const { return forward; }
+  // std::vector<Node<K, V> *> &getForward() { return forward; }
 
-  // Get the forward pointer at a specific index
-  Node<K, V> *getForwardAt(int _index) const { return forward[_index]; }
-  Node<K, V> *getForwardAt(int _index) { return forward[_index]; }
+  // // Get the forward pointer at a specific index
+  // Node<K, V> *getForwardAt(int _index) const { return forward[_index]; }
+  // Node<K, V> *getForwardAt(int _index) { return forward[_index]; }
 
-  // Set the forward pointer at a specific index
-  void setForwardAt(int _index, Node<K, V> *_node) { forward[_index] = _node; }
+  // // Set the forward pointer at a specific index
+  // void setForwardAt(int _index, Node<K, V> *_node) { forward[_index] = _node;
+  // }
 };
