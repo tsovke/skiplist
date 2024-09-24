@@ -20,10 +20,10 @@ public:
   // Destructor
   ~Node() {
     // Explicity delete all forward pointers to avoid memory leaks
-    for (auto &prt : forward)
-      if (prt) {
-        delete prt;
-      }
+    // for (auto &prt : forward)
+    //   if (prt) {
+    //     delete prt;
+    //   }
   }
 
   // Get the key

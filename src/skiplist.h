@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <mutex>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -41,16 +42,14 @@ public:
   SkipList() : level(), node_count() {
     this->header = new Node<K, V>(K(), V(), MAX_LEVEL);
   }
-  ~SkipList() = default;
-  //  {
-  //   Node<K, V> *node = header;
-  //   Node<K, V> *tmp;
-  //   while (node) {
-  //     tmp = node;
-  //     node = node->forward[0];
-  //     delete tmp;
-  //   }
-  // }
+  ~SkipList() {
+    Node<K, V> *node = header;
+    while (node) {
+      Node<K, V> *next = node->forward[0];
+      delete node;
+      node = next;
+    }
+  }
 };
 
 template <typename K, typename V> int SkipList<K, V>::randomLevel() {
@@ -90,9 +89,9 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
   }
 
   node = node->forward[0];
-  if (node && node->GetKey() == key)
+  if (node && node->GetKey() == key) {
     return false; // If the key exists, return false.
-
+  }
   int newLevel = randomLevel();
   if (newLevel > level) {
     newLevel = ++level;
@@ -106,7 +105,6 @@ bool SkipList<K, V>::insert(const K &key, const V &val) {
     update[i]->forward[i] = newNode;
   }
   ++node_count;
-
   delete[] update;
   return true;
 }
@@ -122,9 +120,9 @@ template <typename K, typename V> bool SkipList<K, V>::remove(K key) {
   }
 
   node = node->forward[0];
-  if (node && node->GetKey() != key)
+  if (node && node->GetKey() != key) {
     return false;
-
+  }
   for (int i = 0; i <= level; ++i) {
     if (update[i]->forward[i] != node)
       break;
